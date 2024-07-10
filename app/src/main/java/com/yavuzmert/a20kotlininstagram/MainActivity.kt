@@ -14,7 +14,6 @@ import com.yavuzmert.a20kotlininstagram.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    //def
     private lateinit var binding : ActivityMainBinding
     private lateinit var auth : FirebaseAuth
 
