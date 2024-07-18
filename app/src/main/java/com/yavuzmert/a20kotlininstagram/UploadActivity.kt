@@ -94,4 +94,9 @@ class UploadActivity : AppCompatActivity() {
             -activityResultLauncher ve permissionLauncher onCreate altında register etmemiz gerekiyor o yüzden fun tanımladık registerLauncher adında olacak şekilde.
             -görselin Uri'ını registerForActivityResult(ActivityResultContracts.StartActivityForResult(),) kısmında alıyoruz ve virgülden sonra bir callback dönüyor bu da görselin uri alındıktan sonra kullanıcı ne yapacak ve ona göre de resultCode kontrol ediyoruz ok, cancelled gibi çünkü kullanıcı iptal de edebilir image seçmeyi.
             -Uri intentFromResult ile dönüş yapıyor bize onu da bir global değişkende tutabiliriz ve imageView'e direkt koyabiliriz.
+         3. upload işlemini yapacağız o yüzden firebase'deki veri depolama ve firestore kısmını çözmeliyiz.
+            -firebase'de iki tane alan var FirestoreDatabase ve RealtimeDatabase ve yeni teknoloji olan FirestoreDatabase
+            note; bu ikisi de NoSQL dediğimiz bir veri tabanı ve firebase database oluşturacağız.
+            -bu tip veri tabanlarında collections and documents var.
+            -documents kısmını storage'e koyacağız ve oradan alacağımız url'yi firestore kısmına imageurl olarak koyacağız.
  */
