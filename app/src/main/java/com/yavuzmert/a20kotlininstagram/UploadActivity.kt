@@ -120,15 +120,17 @@ class UploadActivity : AppCompatActivity() {
            }
         }
 
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ it ->
-            if(it == true){
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ result ->
+            val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            activityResultLauncher.launch(intentToGallery)
+            /*if(result == true){
                 //permission granted
                 val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 activityResultLauncher.launch(intentToGallery)
             } else {
                 //permissin denied
                 Toast.makeText(this@UploadActivity, "Permission needed!", Toast.LENGTH_LONG).show()
-            }
+            }*/
         }
     }
 }
@@ -159,4 +161,7 @@ class UploadActivity : AppCompatActivity() {
             -güncel kullanıcı auth'dan alıyoruz.
             note; kaydettiğimiz görselin url'sini de alıp string olarak kaydetmemiz lazım, yükledikten sonra çağıracağız
             -Timestamp.now(), güncel zamanı veriyor.
+         4. verileri çekmek, iki yolu var getDataOnce bir defa çekme veya listenForRealTimeUpdate, canlı veri çekme durumu
+            note; firebase documentation'dan her şeyi inceleyebiliyoruz ve feedActivity'den devam ediyoruz.
+
  */
