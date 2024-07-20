@@ -15,7 +15,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.yavuzmert.a20kotlininstagram.databinding.ActivityUploadBinding
+import java.sql.Timestamp
+import java.util.UUID
 
 class UploadActivity : AppCompatActivity() {
 
@@ -23,6 +32,9 @@ class UploadActivity : AppCompatActivity() {
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     var selectedPicture : Uri? = null
+    private lateinit var auth : FirebaseAuth
+    private lateinit var firestore : FirebaseFirestore
+    private lateinit var storage : FirebaseStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,9 +43,48 @@ class UploadActivity : AppCompatActivity() {
         setContentView(view)
 
         registerLauncher()
+
+        auth = Firebase.auth
+        firestore = Firebase.firestore
+        storage = Firebase.storage
     }
 
     fun upload(view: View){
+
+        //universal unique id
+        val uuid = UUID.randomUUID()
+        val imageName = "$uuid.jpg"
+
+        val  reference = storage.reference
+        val imageReference = reference.child("images").child(imageName)
+
+        if(selectedPicture != null){
+            imageReference.putFile(selectedPicture!!).addOnSuccessListener{
+                    //download url -> firestore
+                val uploadPictureReference = storage.reference.child("images").child(imageName)
+                uploadPictureReference.downloadUrl.addOnSuccessListener {
+                    val downloadUrl = it.toString()
+
+                    //değerleri ekleyelim
+                    if(auth.currentUser != null){
+                    val postMap = hashMapOf<String, Any>()
+                    postMap.put("downloadUrl", downloadUrl)
+                    postMap.put("userEmail", auth.currentUser!!.email!!)
+                    postMap.put("comment", binding.commentText.text.toString())
+                        postMap.put("date", com.google.firebase.Timestamp.now())
+
+                        firestore.collection("Posts").add(postMap).addOnSuccessListener {
+                            finish()
+                        }.addOnFailureListener {
+                            Toast.makeText(this@UploadActivity, it.localizedMessage,Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
+            }.addOnFailureListener {
+                Toast.makeText(this, it.localizedMessage,Toast.LENGTH_LONG).show()
+            }
+        }
 
     }
 
@@ -69,17 +120,17 @@ class UploadActivity : AppCompatActivity() {
            }
         }
 
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){result ->
-            if(result){
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ it ->
+            if(it == true){
                 //permission granted
                 val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 activityResultLauncher.launch(intentToGallery)
-            } else{
+            } else {
                 //permissin denied
                 Toast.makeText(this@UploadActivity, "Permission needed!", Toast.LENGTH_LONG).show()
             }
-            }
         }
+    }
 }
 
 /*
@@ -99,4 +150,13 @@ class UploadActivity : AppCompatActivity() {
             note; bu ikisi de NoSQL dediğimiz bir veri tabanı ve firebase database oluşturacağız.
             -bu tip veri tabanlarında collections and documents var.
             -documents kısmını storage'e koyacağız ve oradan alacağımız url'yi firestore kısmına imageurl olarak koyacağız.
+            -uygulamadan firebase'e depolamak için;
+                1.auth
+                2.firestore
+                3.storage taınmlayacağız.
+                daha sonra onCreate altında auth tanımlıyoruz,
+            -upload fun altında, firebase'deki reference konumu alıyoruz
+            -güncel kullanıcı auth'dan alıyoruz.
+            note; kaydettiğimiz görselin url'sini de alıp string olarak kaydetmemiz lazım, yükledikten sonra çağıracağız
+            -Timestamp.now(), güncel zamanı veriyor.
  */
