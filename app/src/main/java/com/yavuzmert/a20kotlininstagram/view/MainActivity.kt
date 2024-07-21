@@ -1,4 +1,4 @@
-package com.yavuzmert.a20kotlininstagram
+package com.yavuzmert.a20kotlininstagram.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.yavuzmert.a20kotlininstagram.databinding.ActivityFeedBinding
 import com.yavuzmert.a20kotlininstagram.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         val currentUser = auth.currentUser
         if(currentUser != null){
-            val intent = Intent(this,FeedActivity::class.java)
+            val intent = Intent(this, FeedActivity::class.java)
             startActivity(intent)
             finish()
         }

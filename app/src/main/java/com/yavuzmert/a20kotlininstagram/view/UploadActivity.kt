@@ -1,4 +1,4 @@
-package com.yavuzmert.a20kotlininstagram
+package com.yavuzmert.a20kotlininstagram.view
 
 import android.Manifest
 import android.content.Intent
@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -23,7 +22,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.yavuzmert.a20kotlininstagram.databinding.ActivityUploadBinding
-import java.sql.Timestamp
 import java.util.UUID
 
 class UploadActivity : AppCompatActivity() {
